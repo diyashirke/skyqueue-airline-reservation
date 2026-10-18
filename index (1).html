@@ -1,0 +1,403 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>SkyQueue | Airline Reservation System using Queue (DSA in C)</title>
+  <meta name="description" content="Airline reservation system with FIFO waitlist built on a linked-list queue. DSA project in C with a live demo.">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="style.css">
+</head>
+<body>
+
+  <!-- NAVBAR -->
+  <header class="nav">
+    <div class="container nav-inner">
+      <a href="#home" class="brand"><span class="brand-icon">✈</span> SkyQueue</a>
+      <button class="nav-toggle" id="navToggle" aria-label="Toggle menu">☰</button>
+      <nav id="navLinks">
+        <a href="#overview">Overview</a>
+        <a href="#structure">Data Structure</a>
+        <a href="#algorithms">Algorithms</a>
+        <a href="#demo">Live Demo</a>
+        <a href="#complexity">Complexity</a>
+        <a href="#code">Code</a>
+        <a href="#output">Output</a>
+      </nav>
+    </div>
+  </header>
+
+  <!-- HERO -->
+  <section class="hero" id="home">
+    <div class="container hero-inner">
+      <div class="hero-text">
+        <span class="pill">DSA Project · C Programming</span>
+        <h1>Airline Reservation System <span class="grad">using Queue</span></h1>
+        <p class="lead">Book seats, cancel tickets and manage a fair first-come-first-served waitlist. When a seat opens up, the passenger at the front of the queue is promoted automatically.</p>
+        <div class="hero-actions">
+          <a href="#demo" class="btn btn-primary">Try the Live Demo</a>
+          <a href="#overview" class="btn btn-ghost">Read the Report</a>
+        </div>
+        <ul class="hero-stats">
+          <li><strong>FIFO</strong><span>Waitlist order</span></li>
+          <li><strong>O(1)</strong><span>Enqueue / Dequeue</span></li>
+          <li><strong>1</strong><span>Main data structure</span></li>
+        </ul>
+      </div>
+      <div class="hero-card" aria-hidden="true">
+        <div class="ticket">
+          <div class="ticket-top">
+            <span>SKY 204</span><span>PUNE → DELHI</span>
+          </div>
+          <div class="ticket-mid">
+            <div><small>PASSENGER</small><b>A. SHARMA</b></div>
+            <div><small>SEAT</small><b>3A</b></div>
+            <div><small>TICKET</small><b>#1003</b></div>
+          </div>
+          <div class="ticket-bar"></div>
+        </div>
+        <div class="mini-queue">
+          <span class="mq-label">Waitlist</span>
+          <span class="mq-node">W1</span><span class="mq-arrow">→</span>
+          <span class="mq-node">W2</span><span class="mq-arrow">→</span>
+          <span class="mq-node">W3</span>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <main>
+
+    <!-- OVERVIEW -->
+    <section class="section" id="overview">
+      <div class="container">
+        <div class="section-head">
+          <span class="eyebrow">01 · Overview</span>
+          <h2>Problem Statement &amp; Objective</h2>
+        </div>
+        <div class="grid-2">
+          <div class="card">
+            <h3>Problem</h3>
+            <p>A flight has a fixed number of seats. When bookings exceed capacity, passengers must be handled fairly instead of being rejected. Manual handling is slow and error-prone, and cancellations should free seats for waiting passengers immediately.</p>
+          </div>
+          <div class="card">
+            <h3>Objective</h3>
+            <p>Build a menu-driven C program that books and cancels tickets, keeps overflow passengers in a waitlist, and promotes them automatically in arrival order using a queue.</p>
+          </div>
+        </div>
+        <div class="features">
+          <div class="feature"><span>🎫</span><h4>Book Ticket</h4><p>Assigns the first free seat or joins the waitlist.</p></div>
+          <div class="feature"><span>❌</span><h4>Cancel Ticket</h4><p>Frees the seat and triggers waitlist promotion.</p></div>
+          <div class="feature"><span>⏳</span><h4>Waitlist</h4><p>FIFO queue with live position tracking.</p></div>
+          <div class="feature"><span>📋</span><h4>Flight Summary</h4><p>Seats filled, seats left and people waiting.</p></div>
+        </div>
+      </div>
+    </section>
+
+    <!-- DATA STRUCTURE -->
+    <section class="section alt" id="structure">
+      <div class="container">
+        <div class="section-head">
+          <span class="eyebrow">02 · Data Structure</span>
+          <h2>Queue (Linked-List Implementation)</h2>
+          <p class="sub">A queue follows <b>First In, First Out</b>. The first passenger to join the waitlist is the first to get a seat.</p>
+        </div>
+
+        <div class="diagram">
+          <div class="d-end"><small>FRONT</small><span>dequeue here</span></div>
+          <div class="d-nodes">
+            <div class="d-node"><b>1005</b><small>Rahul</small></div>
+            <span class="d-arrow">→</span>
+            <div class="d-node"><b>1006</b><small>Priya</small></div>
+            <span class="d-arrow">→</span>
+            <div class="d-node"><b>1007</b><small>Amit</small></div>
+            <span class="d-arrow">→</span>
+            <div class="d-node null">NULL</div>
+          </div>
+          <div class="d-end"><small>REAR</small><span>enqueue here</span></div>
+        </div>
+
+        <div class="grid-3">
+          <div class="card">
+            <h3>Why a Queue?</h3>
+            <p>Waitlists are naturally first-come-first-served. A queue guarantees fairness with no extra logic.</p>
+          </div>
+          <div class="card">
+            <h3>Why a Linked List?</h3>
+            <p>The waitlist size is unknown in advance. Nodes are allocated with <code>malloc</code> only when needed, so no space is wasted.</p>
+          </div>
+          <div class="card">
+            <h3>Node Structure</h3>
+            <pre class="mini-code"><code>typedef struct Passenger {
+    int  ticketId;
+    char name[50];
+    int  seatNo;
+    struct Passenger *next;
+} Passenger;</code></pre>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- ALGORITHMS -->
+    <section class="section" id="algorithms">
+      <div class="container">
+        <div class="section-head">
+          <span class="eyebrow">03 · Algorithms</span>
+          <h2>Algorithms Used</h2>
+        </div>
+        <div class="algo-grid">
+          <article class="algo">
+            <span class="algo-num">1</span>
+            <h3>Enqueue</h3>
+            <p>Adds a passenger at the rear of the waitlist when all seats are taken.</p>
+            <ol>
+              <li>Create a new node with <code>malloc</code></li>
+              <li>If queue is empty, set front = rear = node</li>
+              <li>Else link <code>rear→next</code> to node, move rear</li>
+            </ol>
+            <span class="tag">O(1)</span>
+          </article>
+          <article class="algo">
+            <span class="algo-num">2</span>
+            <h3>Dequeue</h3>
+            <p>Removes the passenger at the front when a seat becomes free.</p>
+            <ol>
+              <li>Check the queue is not empty</li>
+              <li>Save front node, move front to <code>front→next</code></li>
+              <li>If queue is now empty, set rear = NULL</li>
+            </ol>
+            <span class="tag">O(1)</span>
+          </article>
+          <article class="algo">
+            <span class="algo-num">3</span>
+            <h3>Waitlist Promotion</h3>
+            <p>On cancellation, the freed seat is given to the front of the queue.</p>
+            <ol>
+              <li>Cancel booking, mark seat free</li>
+              <li>If waitlist is not empty, dequeue</li>
+              <li>Assign the freed seat to that passenger</li>
+            </ol>
+            <span class="tag">O(1)</span>
+          </article>
+          <article class="algo">
+            <span class="algo-num">4</span>
+            <h3>Linear Search</h3>
+            <p>Finds a booking (or waitlist entry) by ticket ID for cancellation.</p>
+            <ol>
+              <li>Scan seats one by one comparing ID</li>
+              <li>If not found, scan the waitlist nodes</li>
+              <li>Return the match or report not found</li>
+            </ol>
+            <span class="tag">O(n)</span>
+          </article>
+        </div>
+      </div>
+    </section>
+
+    <!-- LIVE DEMO -->
+    <section class="section alt" id="demo">
+      <div class="container">
+        <div class="section-head">
+          <span class="eyebrow">04 · Live Demo</span>
+          <h2>Try the Queue in Action</h2>
+          <p class="sub">This simulator follows the exact same logic as the C program. Fill the seats, then cancel one and watch the waitlist promote.</p>
+        </div>
+
+        <div class="sim">
+          <div class="sim-controls card">
+            <h3>Passenger Desk</h3>
+            <form id="bookForm" autocomplete="off">
+              <label for="nameInput">Passenger name</label>
+              <input id="nameInput" type="text" maxlength="30" placeholder="e.g. Rahul Verma" required>
+              <button class="btn btn-primary full" type="submit">Book Ticket</button>
+            </form>
+            <div class="btn-row">
+              <button class="btn btn-ghost" id="fillBtn" type="button">Add 8 sample passengers</button>
+              <button class="btn btn-ghost" id="resetBtn" type="button">Reset</button>
+            </div>
+            <div class="summary" id="summary"></div>
+          </div>
+
+          <div class="sim-view">
+            <div class="card">
+              <div class="card-title"><h3>Seat Map</h3><span class="legend"><i class="dot free"></i>Free <i class="dot taken"></i>Booked</span></div>
+              <div class="seat-grid" id="seatGrid"></div>
+            </div>
+
+            <div class="card">
+              <div class="card-title"><h3>Waitlist Queue</h3><span class="legend">FRONT → REAR</span></div>
+              <div class="queue-row" id="queueRow"></div>
+            </div>
+
+            <div class="card">
+              <div class="card-title"><h3>Activity Log</h3></div>
+              <ul class="log" id="log"></ul>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- COMPLEXITY -->
+    <section class="section" id="complexity">
+      <div class="container">
+        <div class="section-head">
+          <span class="eyebrow">05 · Complexity</span>
+          <h2>Time &amp; Space Complexity</h2>
+        </div>
+        <div class="table-wrap">
+          <table>
+            <thead><tr><th>Operation</th><th>Time</th><th>Space</th><th>Note</th></tr></thead>
+            <tbody>
+              <tr><td>Book a seat</td><td>O(n)</td><td>O(1)</td><td>Scans for first free seat (n = capacity)</td></tr>
+              <tr><td>Enqueue (join waitlist)</td><td>O(1)</td><td>O(1)</td><td>Rear pointer gives direct access</td></tr>
+              <tr><td>Dequeue (promote)</td><td>O(1)</td><td>O(1)</td><td>Front pointer gives direct access</td></tr>
+              <tr><td>Cancel by ticket ID</td><td>O(n + w)</td><td>O(1)</td><td>Linear search over seats, then waitlist (w)</td></tr>
+              <tr><td>Display waitlist</td><td>O(w)</td><td>O(1)</td><td>Traverse every node once</td></tr>
+              <tr><td>Whole system</td><td>-</td><td>O(n + w)</td><td>Seat array plus waitlist nodes</td></tr>
+            </tbody>
+          </table>
+        </div>
+      </div>
+    </section>
+
+    <!-- CODE -->
+    <section class="section alt" id="code">
+      <div class="container">
+        <div class="section-head">
+          <span class="eyebrow">06 · Source Code</span>
+          <h2>Core Functions in C</h2>
+          <p class="sub">Key functions are shown here. The complete program is in <code>airline.c</code>.</p>
+        </div>
+        <div class="tabs" id="codeTabs">
+          <button class="tab active" data-tab="enq">enqueue()</button>
+          <button class="tab" data-tab="deq">dequeue()</button>
+          <button class="tab" data-tab="cancel">cancelTicket()</button>
+        </div>
+        <div class="code-box">
+<pre class="code-pane active" id="tab-enq"><code>void enqueue(Queue *q, Passenger *p) {
+    p-&gt;next = NULL;
+    if (q-&gt;rear == NULL) {          /* empty queue */
+        q-&gt;front = q-&gt;rear = p;
+    } else {
+        q-&gt;rear-&gt;next = p;          /* link at the end */
+        q-&gt;rear = p;
+    }
+    q-&gt;size++;
+}</code></pre>
+<pre class="code-pane" id="tab-deq"><code>Passenger *dequeue(Queue *q) {
+    if (q-&gt;front == NULL)           /* underflow */
+        return NULL;
+
+    Passenger *p = q-&gt;front;
+    q-&gt;front = p-&gt;next;
+    if (q-&gt;front == NULL)
+        q-&gt;rear = NULL;             /* queue became empty */
+
+    p-&gt;next = NULL;
+    q-&gt;size--;
+    return p;
+}</code></pre>
+<pre class="code-pane" id="tab-cancel"><code>void cancelTicket(int id) {
+    for (int i = 0; i &lt; CAPACITY; i++) {
+        if (seats[i] &amp;&amp; seats[i]-&gt;ticketId == id) {
+            printf("Ticket %d cancelled (seat %d).\n", id, i + 1);
+            free(seats[i]);
+            seats[i] = NULL;
+
+            Passenger *next = dequeue(&amp;waitlist);   /* promotion */
+            if (next) {
+                next-&gt;seatNo = i + 1;
+                seats[i] = next;
+                printf("%s promoted from waitlist to seat %d.\n",
+                       next-&gt;name, i + 1);
+            }
+            return;
+        }
+    }
+    /* otherwise search the waitlist ... (see airline.c) */
+}</code></pre>
+        </div>
+      </div>
+    </section>
+
+    <!-- OUTPUT -->
+    <section class="section" id="output">
+      <div class="container">
+        <div class="section-head">
+          <span class="eyebrow">07 · Sample Output</span>
+          <h2>Program Output</h2>
+          <p class="sub">Capacity set to 3 seats for this example.</p>
+        </div>
+        <div class="terminal">
+          <div class="term-bar"><i></i><i></i><i></i><span>airline.exe</span></div>
+<pre><code><span class="c-dim">=== SKYQUEUE AIRLINE RESERVATION ===</span>
+1. Book Ticket   2. Cancel Ticket   3. Passenger List
+4. Waitlist      5. Flight Summary  6. Exit
+<span class="c-in">Enter choice: 1</span>
+Name: Rahul
+<span class="c-ok">Booked! Ticket #1001, Seat 1</span>
+
+<span class="c-in">Enter choice: 1</span>
+Name: Priya
+<span class="c-ok">Booked! Ticket #1002, Seat 2</span>
+
+<span class="c-in">Enter choice: 1</span>
+Name: Amit
+<span class="c-ok">Booked! Ticket #1003, Seat 3</span>
+
+<span class="c-in">Enter choice: 1</span>
+Name: Neha
+<span class="c-warn">Flight full. Added to waitlist: Ticket #1004, Position 1</span>
+
+<span class="c-in">Enter choice: 2</span>
+Ticket ID to cancel: 1002
+<span class="c-ok">Ticket 1002 cancelled (seat 2).</span>
+<span class="c-ok">Neha promoted from waitlist to seat 2.</span>
+
+<span class="c-in">Enter choice: 5</span>
+Seats: 3/3 filled | Free: 0 | Waiting: 0</code></pre>
+        </div>
+      </div>
+    </section>
+
+    <!-- CONCLUSION -->
+    <section class="section alt" id="conclusion">
+      <div class="container">
+        <div class="section-head">
+          <span class="eyebrow">08 · Conclusion</span>
+          <h2>Conclusion &amp; Future Scope</h2>
+        </div>
+        <div class="grid-2">
+          <div class="card">
+            <h3>Conclusion</h3>
+            <p>The project shows how a queue models real-world fairness. Enqueue and dequeue run in constant time, so the waitlist stays fast no matter how many passengers join.</p>
+          </div>
+          <div class="card">
+            <h3>Future Scope</h3>
+            <ul class="ticks">
+              <li>Priority queue so senior or VIP passengers are promoted first</li>
+              <li>Multiple flights using a hash table of queues</li>
+              <li>Saving bookings to a file for permanent storage</li>
+              <li>Sorting passengers by name or seat number</li>
+            </ul>
+          </div>
+        </div>
+      </div>
+    </section>
+
+  </main>
+
+  <footer class="footer">
+    <div class="container">
+      <p><b>SkyQueue</b> · Airline Reservation System using Queue · DSA Project in C</p>
+      <p class="muted">Submitted by: Your Name · Roll No: 000 · Guide: Prof. Name</p>
+    </div>
+  </footer>
+
+  <script src="script.js"></script>
+</body>
+</html>
